@@ -25,7 +25,8 @@ SECRET_KEY = 'v3a0#dye97+bp2qw8$ka#i==our*&pcu+12@9r^%4z65rw$(e8'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['http://coronadailystats-env.eba-smmziqdp.us-east-1.elasticbeanstalk.com/']
+ALLOWED_HOSTS = ['http://coronadailystats-env.eba-smmziqdp.us-east-1.elasticbeanstalk.com/',
+                 'http://djangotest.us-east-1.elasticbeanstalk.com/']
 
 
 # Application definition
