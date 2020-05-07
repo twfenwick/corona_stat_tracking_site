@@ -14,14 +14,14 @@ phases:
       - echo "Before running tests"
 #      - sudo ls /root
       - pip install -r requirements.txt
-      - echo "mysql-server mysql-server/root_password password ${DB_ROOT_PASSWORD}" |debconf-set-selections
-      - echo "mysql-server mysql-server/root_password_again password ${DB_ROOT_PASSWORD}" |debconf-set-selections
-      - apt-key adv --keyserver hkp://keys.gnupg.net --recv-keys ${KEYID} || apt-key adv --keyserver keyserver.ubuntu.com --recv-keys ${KEYID}
-      - chmod a+x ./server_configs/scripts/add_mysql.sh
-      - sudo ./server_configs/scripts/add_mysql.sh
-      - sudo apt-get install -y mysql-server
-      - service mysql start
-      - mysql -hlocalhost -uroot -ppassword -P3306 -e "show databases;"
+#      - echo "mysql-server mysql-server/root_password password ${DB_ROOT_PASSWORD}" |debconf-set-selections
+#      - echo "mysql-server mysql-server/root_password_again password ${DB_ROOT_PASSWORD}" |debconf-set-selections
+#      - apt-key adv --keyserver hkp://keys.gnupg.net --recv-keys ${KEYID} || apt-key adv --keyserver keyserver.ubuntu.com --recv-keys ${KEYID}
+#      - chmod a+x ./server_configs/scripts/add_mysql.sh
+#      - sudo ./server_configs/scripts/add_mysql.sh
+#      - sudo apt-get install -y mysql-server
+#      - service mysql start
+#      - mysql -hlocalhost -uroot -ppassword -P3306 -e "show databases;"
   build:
     commands:
       - echo "Running all unit tests"
