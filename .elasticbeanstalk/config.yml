@@ -1,0 +1,17 @@
+branch-defaults:
+  master:
+    environment: corona-track-env
+    group_suffix: null
+global:
+  application_name: corona-tracking
+  branch: null
+  default_ec2_keyname: corona-ec2
+  default_platform: python-3.7
+  default_region: us-east-1
+  instance_profile: null
+  platform_name: null
+  platform_version: null
+  profile: eb-cli
+  repository: null
+  sc: git
+  workspace_type: Application

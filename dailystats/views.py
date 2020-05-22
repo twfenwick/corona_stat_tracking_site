@@ -11,7 +11,14 @@ import pandas
 
 def index(request):
     # return HttpResponse("Hello, world. You're at the polls indexaaa.")
-    # pandafunc('North Carolina')
+    # pandafunc('North Carolina', 'Orange')
+    # pandafunc('District of Columbia')
+    # pandafunc('Florida')
+    # pandafunc('South Carolina')
+    # pandafunc('Alaska')
+    # pandafunc('Utah')
+    # pandafunc('New York')
+    pandafunc('Texas')
     return render(request, 'dailystats/index.html', {'empty': 'entry'})
 
 
@@ -45,7 +52,7 @@ Then I see a trend chart of the state infection rate
 
 
 def pandafunc(state='North Carolina', county=None):
-    # pull_latest_corona_data()
+    pull_latest_corona_data()
     match = [state, county]
     path = path_counties if county else path_states
     df = pandas.read_csv(path)
@@ -64,10 +71,10 @@ def pandafunc(state='North Carolina', county=None):
 
     fig = create_plot_overlays(df, title, new_cases, new_deaths, yaxis_type)
 
-    # import plotly.io as pio
-    # # local_plot = local_plot.replace(' ', '')
-    # local_plot = f'{os.getcwd()}/dailystats/templates/dailystats/index.html'
-    #
+    import plotly.io as pio
+    # local_plot = local_plot.replace(' ', '')
+    local_plot = f'{os.getcwd()}/dailystats/templates/dailystats/index.html'
+
     # # ldr = Loader(engine='')
     # # print(Loader.get_dirs(ldr))
     # # template_path = Loader.get_dirs(ldr)[0]
@@ -83,8 +90,8 @@ def pandafunc(state='North Carolina', county=None):
     # # Repo is current but file doesn't exist:
     # #  write the file
     #
-    # file_path = f'{local_plot}'
-    # pio.write_html(fig, file=file_path, auto_open=False)
+    file_path = f'{local_plot}'
+    pio.write_html(fig, file=file_path, auto_open=False)
     # # plot = pio.to_html(fig)
     #
     # return file_path
