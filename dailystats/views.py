@@ -11,14 +11,16 @@ import pandas
 
 def index(request):
     # return HttpResponse("Hello, world. You're at the polls indexaaa.")
+    pandafunc('North Carolina')
     # pandafunc('North Carolina', 'Orange')
+    # pandafunc('North Carolina', 'New Hanover')
     # pandafunc('District of Columbia')
     # pandafunc('Florida')
     # pandafunc('South Carolina')
     # pandafunc('Alaska')
     # pandafunc('Utah')
     # pandafunc('New York')
-    pandafunc('Texas')
+    # pandafunc('Texas')
     return render(request, 'dailystats/index.html', {'empty': 'entry'})
 
 
@@ -167,9 +169,25 @@ def parse_args():
 
 
 def pull_latest_corona_data():
-    # TODO: Clone repo if doesn't exist
+    # Clone repo if doesn't exist
+    print(os.getcwd())
+    if not os.path.exists(f'{os.getcwd()}/covid-19-data'):
+        os.system('git clone https://github.com/nytimes/covid-19-data.git')
     # TODO: Update repo if not fetched latest
-    os.system('cd /Users/tim/code/github/nytimes/covid-19-data; pwd; git pull origin master')
+    os.chdir('covid-19-data')
+    print(os.getcwd())
+    status = os.system('git status')
+    print('debug')
+    if 'Your branch is up to date' not in str(status):
+        # print(str(status)) returns 0
+        print('debug3')
+        os.system('git pull origin master')
+    else:
+        # TODO: Add logger
+        print('debug2')
+        print('Skipping pull, already up to date.')
+    os.chdir('..')
+    print(os.getcwd())
 
 
 if __name__ == '__main__':
