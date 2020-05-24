@@ -11,6 +11,7 @@ import pandas
 
 def index(request):
     # return HttpResponse("Hello, world. You're at the polls indexaaa.")
+    # pandafunc()
     pandafunc('North Carolina')
     # pandafunc('North Carolina', 'Orange')
     # pandafunc('North Carolina', 'New Hanover')
@@ -38,8 +39,9 @@ def pandamix(request):
 import argparse
 
 
-path_counties = '/Users/tim/code/github/nytimes/covid-19-data/us-counties.csv'
-path_states = '/Users/tim/code/github/nytimes/covid-19-data/us-states.csv'
+path_counties = ''
+path_states = ''
+path_us = ''
 
 # yaxis_type = 'log'
 yaxis_type = 'linear'
@@ -53,7 +55,7 @@ Then I see a trend chart of the state infection rate
 """
 
 
-def pandafunc(state='North Carolina', county=None):
+def pandafunc(state=None, county=None):
     pull_latest_corona_data()
     match = [state, county]
     path = path_counties if county else path_states
@@ -64,9 +66,11 @@ def pandafunc(state='North Carolina', county=None):
         df = df[df['county'].isin(match)]
         title = f'{county} County, {state}'
         local_plot = f'plots/{state}/{county}'
-    else:
+    elif state:
         title = state
         local_plot = f'plots/{state}'
+    else:
+        title = 'United States'
 
     new_cases = df['cases'].diff()
     new_deaths = df['deaths'].diff()
@@ -175,12 +179,22 @@ def pull_latest_corona_data():
         os.system('git clone https://github.com/nytimes/covid-19-data.git')
     # TODO: Update repo if not fetched latest
     os.chdir('covid-19-data')
-    print(os.getcwd())
+    print()
+    global path_counties
+    global path_states
+    global path_us
+    path_counties = f'{os.getcwd()}/us-counties.csv'
+    path_states = f'{os.getcwd()}/us-states.csv'
+    path_us = f'{os.getcwd()}/us.csv'
+    print(path_counties)
+    print(f'counties path: {path_counties}')
+    print(f'states path: {path_states}')
+    print(f'us path: {path_us}')
+    path_counties = f'{os.getcwd()}/us-states.csv'
     status = os.system('git status')
-    print('debug')
     if 'Your branch is up to date' not in str(status):
-        # print(str(status)) returns 0
-        print('debug3')
+        # print(str(status)) ...actually returns 0
+        print('Attempt pull')
         os.system('git pull origin master')
     else:
         # TODO: Add logger
