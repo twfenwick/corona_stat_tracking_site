@@ -33,13 +33,13 @@ ALLOWED_HOSTS = ['corona-track-env.eba-5kd25yp2.us-east-1.elasticbeanstalk.com',
 # Application definition
 
 INSTALLED_APPS = [
+    'dailystats.apps.DailyStatsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'dailystats.apps.DailyStatsConfig',
 ]
 
 MIDDLEWARE = [
