@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from django.utils.log import DEFAULT_LOGGING as DEFLOG
+import json
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -121,3 +123,90 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+# Logging configuration
+# https://docs.djangoproject.com/en/3.0/topics/logging/
+# https://docs.python.org/3/library/logging.config.html#logging-config-dictschema
+
+if not os.path.exists(f'{os.getcwd()}/logs'):
+    os.mkdir('logs')
+
+
+print(json.dumps(DEFLOG, indent=4, sort_keys=True))
+LOGGING = DEFLOG
+logconfig = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[{asctime}] - {levelname} {module} {process:d} {thread:d} - {message}',
+            'style': '{',
+        },
+        'detailed': {
+            'format': '[{asctime}] - {levelname} {name} - {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '[{levelname}] {message}',
+            'style': '{',
+        },
+    },
+    'filters': {
+        'special': {
+            '()': 'corona_stat_tracking_site.logging.SpecialFilter',
+            'foo': 'bar',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'console2': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'detailed'
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': f'{os.getcwd()}/logs/debug.log',
+            'formatter': 'django.server'
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'filters': ['special']
+        }
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'myproject.custom': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'INFO',
+            'filters': ['special']
+        },
+        'covidtrack': {
+            'handlers': ['console2', 'file'],
+            'level': 'DEBUG'
+        }
+    }
+}
+LOGGING.get('filters', {}).update(logconfig.get('filters', {}))
+LOGGING.get('formatters', {}).update(logconfig.get('formatters', {}))
+LOGGING.get('handlers', {}).update(logconfig.get('handlers', {}))
+LOGGING.get('loggers', {}).update(logconfig.get('loggers', {}))
+print('\n*************************************************\n')
+print(json.dumps(LOGGING, indent=4, sort_keys=True))
+
