@@ -9,6 +9,8 @@ import plotly.express as px
 import plotly.io as pio
 import pandas
 
+from corona_stat_tracking_site.states import STATES
+
 logger = logging.getLogger('covidtrack')
 logging.getLogger()
 # yaxis_type = 'log'
@@ -28,28 +30,41 @@ Then I see a trend chart of the state infection rate
 
 
 def index(request):
-    logger.info('Beginning plot render.')
-    # pandafunc('North Carolina')
-    pandafunc('Alabama')
-    # pandafunc('North Carolina', 'Orange')
-    # pandafunc('North Carolina', 'New Hanover')
-    # pandafunc('District of Columbia')
-    # pandafunc('Florida')
-    # pandafunc('South Carolina')
-    # pandafunc('Alaska')
-    # pandafunc('Utah')
-    # pandafunc('New York')
-    # pandafunc('Texas')
-    return render(request, 'dailystats/index.html', {'empty': 'entry'})
+    """Render states list. Each has county expand menu"""
+    pandafunc()
+    logger.info(f'Render: US stats')
+    return render(request, 'dailystats/US.html', {'empty': 'entry'})
 
 
-def pandafunc(state=None, county=None):
+def states(request, state_abrv: str):
+    return counties(request, state_abrv=state_abrv.upper(), county='')
+    # logger.info(f'Render: {STATES.get(state_abrv)}')
+    # return render(request, f'dailystats/{state_abrv.upper()}.html', {'empty': 'entry'})
+
+
+def counties(request, state_abrv: str, county: str):
+    county.capitalize()
+    # global yaxis_type
+    # if 'LOG' in state_abrv.upper():
+    #     yaxis_type = 'log'
+    #     state_abrv = state_abrv.replace('log', '').replace('LOG', '')
+    # else:
+    #     yaxis_type = 'linear'
+    pandafunc(state_abrv=state_abrv.upper(), county=county)
+    countytxt = f'{county}, ' if county else ''
+    logger.info(f'Render: {countytxt}{STATES.get(state_abrv)}')
+    return render(request, f'dailystats/{state_abrv.upper()}{county}.html', {'empty': 'entry'})
+
+
+def pandafunc(state=None, county='', state_abrv=None):
+    state = STATES.get(state_abrv.upper()) if state_abrv else state
+    county = county.capitalize() if county else county
     pull_latest_corona_data()
     match = [state, county]
     path = path_counties if county else path_states
     df = pandas.read_csv(path)
 
-    df = df[df['state'].isin(match)]
+    df = df[df['state'].isin(match)] if state else pandas.read_csv(path_us)
     if county:
         df = df[df['county'].isin(match)]
         title = f'{county} County, {state}'
@@ -66,8 +81,9 @@ def pandafunc(state=None, county=None):
     fig = create_plot_overlays(df, title, new_cases, new_deaths, yaxis_type)
 
     # local_plot = local_plot.replace(' ', '')
-    local_plot = f'{os.getcwd()}/dailystats/templates/dailystats/index.html'
-
+    filename = f'{state_abrv.upper()}{county}' if state else 'US'
+    local_plot = f'{os.getcwd()}/dailystats/templates/dailystats/{filename}.html'
+    os.remove(local_plot) if os.path.exists(local_plot) else None
     file_path = f'{local_plot}'
     pio.write_html(fig, file=file_path, auto_open=False)
     # # plot = pio.to_html(fig)
@@ -81,16 +97,19 @@ def pandafunc(state=None, county=None):
 def pull_latest_corona_data():
     # Clone repo if doesn't exist
     logger.debug(f'current dir: {os.getcwd()}')
+
     if not os.path.exists(f'{os.getcwd()}/covid-19-data'):
         os.system('git clone https://github.com/nytimes/covid-19-data.git')
 
     os.chdir('covid-19-data')
+
     global path_counties
     global path_states
     global path_us
     path_counties = f'{os.getcwd()}/us-counties.csv'
     path_states = f'{os.getcwd()}/us-states.csv'
     path_us = f'{os.getcwd()}/us.csv'
+
     logger.debug(f'counties path: {path_counties}')
     logger.debug(f'states path: {path_states}')
     logger.debug(f'us path: {path_us}')
