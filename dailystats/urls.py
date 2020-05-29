@@ -8,5 +8,5 @@ app_name = 'dailystats'
 urlpatterns = [
     path('', views.index, name='index'),
     path('<str:state_abrv>/', views.states, name='states'),
-    path('<str:state_abrv>/<county>', views.counties, name='states'),
+    path('<str:state_abrv>/<county>/', views.counties, name='states'),
 ]
