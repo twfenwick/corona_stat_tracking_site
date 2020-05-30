@@ -43,17 +43,18 @@ def states(request, state_abrv: str):
 
 
 def counties(request, state_abrv: str, county: str):
-    county.capitalize()
+    state_abrv = state_abrv.upper()
+    county = county.capitalize()
     # global yaxis_type
     # if 'LOG' in state_abrv.upper():
     #     yaxis_type = 'log'
     #     state_abrv = state_abrv.replace('log', '').replace('LOG', '')
     # else:
     #     yaxis_type = 'linear'
-    pandafunc(state_abrv=state_abrv.upper(), county=county)
+    pandafunc(state_abrv=state_abrv, county=county)
     countytxt = f'{county}, ' if county else ''
     logger.info(f'Render: {countytxt}{STATES.get(state_abrv)}')
-    return render(request, f'dailystats/{state_abrv.upper()}{county}.html', {'empty': 'entry'})
+    return render(request, f'dailystats/{state_abrv}{county}.html', {'empty': 'entry'})
 
 
 def pandafunc(state=None, county='', state_abrv=None):
