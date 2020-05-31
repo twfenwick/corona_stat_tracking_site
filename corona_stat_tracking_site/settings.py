@@ -133,7 +133,7 @@ if not os.path.exists(f'{os.getcwd()}/logs'):
     os.mkdir('logs')
 
 
-print(json.dumps(DEFLOG, indent=4, sort_keys=True))
+# print(json.dumps(DEFLOG, indent=4, sort_keys=True))
 LOGGING = DEFLOG
 logconfig = {
     'version': 1,
@@ -155,7 +155,7 @@ logconfig = {
     'filters': {
         'special': {
             '()': 'corona_stat_tracking_site.logging.SpecialFilter',
-            'foo': 'bar',
+            'foo': 'special filter ex.',
         },
     },
     'handlers': {
@@ -198,7 +198,7 @@ logconfig = {
             'filters': ['special']
         },
         'covidtrack': {
-            'handlers': ['console2', 'file'],
+            'handlers': ['console2'],
             'level': 'DEBUG'
         }
     }
@@ -207,6 +207,6 @@ LOGGING.get('filters', {}).update(logconfig.get('filters', {}))
 LOGGING.get('formatters', {}).update(logconfig.get('formatters', {}))
 LOGGING.get('handlers', {}).update(logconfig.get('handlers', {}))
 LOGGING.get('loggers', {}).update(logconfig.get('loggers', {}))
-print('\n*************************************************\n')
-print(json.dumps(LOGGING, indent=4, sort_keys=True))
+# print('\n*************************************************\n')
+# print(json.dumps(LOGGING, indent=4, sort_keys=True))
 
