@@ -41,12 +41,12 @@ def states(request, state_abrv: str):
 
 
 def counties(request, state_abrv: str, county: str):
-    if 'LOG' in state_abrv.upper():
-        yaxis_type = 'log'
-        state_abrv = state_abrv.replace('log', '').replace('LOG', '')
-    else:
-        yaxis_type = 'linear'
-    title, filename = pandafunc(state_abrv=state_abrv, county=county, yaxis_type=yaxis_type)
+    # if 'LOG' in state_abrv.upper():
+    #     yaxis_type = 'log'
+    #     state_abrv = state_abrv.replace('log', '').replace('LOG', '')
+    # else:
+    #     yaxis_type = 'linear'
+    title, filename = pandafunc(state_abrv=state_abrv, county=county)
     logger.info(f'Render: {title}')
     return render(request, f'dailystats/{filename}', {'empty': 'entry'})
 
