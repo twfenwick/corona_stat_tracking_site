@@ -13,6 +13,7 @@ logger = logging.getLogger('covidtrack')
 logging.getLogger()
 # yaxis_type = 'log'
 # yaxis_type = 'linear'
+auto_open = False
 path_counties = ''
 path_states = ''
 path_us = ''
@@ -29,9 +30,7 @@ Then I see a trend chart of the state infection rate
 
 def index(request):
     """Render states list. Each has county expand menu"""
-    pandafunc()
-    logger.info(f'Render: US stats')
-    return render(request, 'dailystats/US.html', {'empty': 'entry'})
+    return counties(request)
 
 
 def states(request, state_abrv: str):
@@ -40,7 +39,7 @@ def states(request, state_abrv: str):
     # return render(request, f'dailystats/{state_abrv.upper()}.html', {'empty': 'entry'})
 
 
-def counties(request, state_abrv: str, county: str):
+def counties(request, state_abrv: str = '', county: str = ''):
     # if 'LOG' in state_abrv.upper():
     #     yaxis_type = 'log'
     #     state_abrv = state_abrv.replace('log', '').replace('LOG', '')
@@ -52,13 +51,24 @@ def counties(request, state_abrv: str, county: str):
 
 
 def pandafunc(state='', county='', state_abrv='', yaxis_type='linear'):
-    state = STATE_NAMES.get(state_abrv.upper(), '') if state_abrv else state
+    # yaxis_type = 'log'
+    state = STATE_NAMES.get(state_abrv.upper(), '') if state_abrv and not state else state
     state_abrv = STATE_ABRV.get(state, '') if state and not state_abrv else state_abrv
     county = string.capwords(county) if county else county
     pull_latest_corona_data()
     match = [state, county]
-    path = path_counties if county else path_states
-    df = pandas.read_csv(path)if state else pandas.read_csv(path_us)
+
+    if county:
+        path = path_counties
+    elif state:
+        path = path_states
+    else:
+        path = path_us
+
+    df = pandas.read_csv(path)
+    live_path = path.replace('covid-19-data', 'covid-19-data/live')
+    df_live = pandas.read_csv(live_path, header=0)
+    df = pandas.concat([df, df_live])
 
     df = df[df['state'].isin(match)] if state else df
     if county and state:
@@ -81,11 +91,9 @@ def pandafunc(state='', county='', state_abrv='', yaxis_type='linear'):
     plot_path = f'{os.getcwd()}/dailystats/templates/dailystats/{filename}'
     os.remove(plot_path) if os.path.exists(plot_path) else None
 
-    pio.write_html(fig, file=plot_path, auto_open=False)
+    pio.write_html(fig, file=plot_path, auto_open=auto_open)
     # # plot = pio.to_html(fig)
     #
-    # return file_path
-
     # import chart_studio.tools as tls
     # tls.get_embed('file:///Users/tim/code/bitbucket/twfenwick/corona_tracker/index.html')
     return title, filename
@@ -125,6 +133,9 @@ def pull_latest_corona_data():
 
 def create_plot_overlays(df, title, new_cases, new_deaths, yaxis_type):
     # Browser group plots:
+    # import datetime
+    # time = datetime.datetime.now()
+    # title = str(time) + title
     fig = go.Figure()
     fig.add_trace(go.Bar(
         x=df['date'],

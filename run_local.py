@@ -3,6 +3,7 @@ import argparse
 from matplotlib import pyplot as plt
 from plotly import express as px
 
+from dailystats import views
 from dailystats.views import pandafunc
 
 
@@ -34,6 +35,7 @@ def main():
     args = parse_args()
     state = args.get('state', '')
     county = args.get('county', '')
+    views.auto_open = True
     pandafunc(state=state, county=county) if len(state) > 2 else pandafunc(state_abrv=state, county=county)
 
 
