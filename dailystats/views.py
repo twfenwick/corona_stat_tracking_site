@@ -1,7 +1,9 @@
 import os
 import logging
 import string
+import datetime
 
+from bs4 import BeautifulSoup
 from django.shortcuts import render
 import plotly.graph_objects as go
 import plotly.io as pio
@@ -40,17 +42,20 @@ def states(request, state_abrv: str):
 
 
 def counties(request, state_abrv: str = '', county: str = ''):
-    # if 'LOG' in state_abrv.upper():
-    #     yaxis_type = 'log'
-    #     state_abrv = state_abrv.replace('log', '').replace('LOG', '')
-    # else:
-    #     yaxis_type = 'linear'
-    title, filename = pandafunc(state_abrv=state_abrv, county=county)
-    logger.info(f'Render: {title}')
-    return render(request, f'dailystats/{filename}', {'empty': 'entry'})
+    if 'LOG' in state_abrv.upper():
+        yaxis_type = 'log'
+        state_abrv = state_abrv.replace('log', '').replace('LOG', '')
+    else:
+        yaxis_type = 'linear'
+    title, filename, html = pandafunc(state_abrv=state_abrv, county=county, yaxis_type=yaxis_type)
+    logger.info(f'Render: "{title}" from file "{filename}".')
+    # logger.info(body_content)
+    # return render(request, f'dailystats/{filename}', {'empty': 'entry'})
+    return render(request, f'dailystats/{filename}', {'html': html})
 
 
 def pandafunc(state='', county='', state_abrv='', yaxis_type='linear'):
+
     # yaxis_type = 'log'
     state = STATE_NAMES.get(state_abrv.upper(), '') if state_abrv and not state else state
     state_abrv = STATE_ABRV.get(state, '') if state and not state_abrv else state_abrv
@@ -89,14 +94,26 @@ def pandafunc(state='', county='', state_abrv='', yaxis_type='linear'):
     # local_plot = local_plot.replace(' ', '')
     filename = f'{state_abrv.upper()}{county}.html' if state and df['date'].size else 'US.html'
     plot_path = f'{os.getcwd()}/dailystats/templates/dailystats/{filename}'
-    os.remove(plot_path) if os.path.exists(plot_path) else None
-
     pio.write_html(fig, file=plot_path, auto_open=auto_open)
-    # # plot = pio.to_html(fig)
+    if not auto_open:
+        with open(plot_path, 'w') as f:
+            f.write('{% extends \'dailystats/base.html\' %}'
+                    '{% block main_content %}'
+                    '{{ html|safe }}'
+                    '{% endblock %}')
+    # os.remove(plot_path) if os.path.exists(plot_path) else None
+
+    html = pio.to_html(fig)
+
+    # soup = BeautifulSoup(html)
+    # body = soup.find('body')
+    # body_contents = body.findChildren(recursive=False)
+    # bc = body_contents.pop()
+    # bc = body_contents[0]
     #
     # import chart_studio.tools as tls
-    # tls.get_embed('file:///Users/tim/code/bitbucket/twfenwick/corona_tracker/index.html')
-    return title, filename
+    # emb = tls.get_embed(plot_path, 1)
+    return title, filename, html
 
 
 def pull_latest_corona_data():
@@ -129,6 +146,10 @@ def pull_latest_corona_data():
         logger.info('Skipping pull, already up to date.')
     os.chdir('..')
     logger.debug(f'current dir: {os.getcwd()}')
+    date = os.environ.get('DATESTORE', 'Not set')
+    today = datetime.datetime.now().date()
+    if date is not today:
+        os.environ['DATESTORE'] = str(today)
 
 
 def create_plot_overlays(df, title, new_cases, new_deaths, yaxis_type):

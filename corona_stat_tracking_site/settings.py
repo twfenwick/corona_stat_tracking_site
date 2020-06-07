@@ -55,11 +55,11 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'corona_stat_tracking_site.urls'
-
+print('-->' + os.path.abspath(os.path.join(os.pardir, "dailystats/templates/dailystats")))
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.abspath(os.path.join(os.pardir, "dailystats/templates/dailystats"))],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -152,12 +152,6 @@ logconfig = {
             'style': '{',
         },
     },
-    'filters': {
-        'special': {
-            '()': 'corona_stat_tracking_site.logging.SpecialFilter',
-            'foo': 'special filter ex.',
-        },
-    },
     'handlers': {
         'console': {
             'level': 'INFO',
@@ -178,8 +172,7 @@ logconfig = {
         },
         'mail_admins': {
             'level': 'ERROR',
-            'class': 'django.utils.log.AdminEmailHandler',
-            'filters': ['special']
+            'class': 'django.utils.log.AdminEmailHandler'
         }
     },
     'loggers': {
@@ -194,12 +187,11 @@ logconfig = {
         },
         'myproject.custom': {
             'handlers': ['console', 'mail_admins'],
-            'level': 'INFO',
-            'filters': ['special']
+            'level': 'INFO'
         },
         'covidtrack': {
             'handlers': ['console2'],
-            'level': 'DEBUG'
+            'level': 'INFO'
         }
     }
 }
