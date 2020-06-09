@@ -29,7 +29,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['corona-track-env.eba-5kd25yp2.us-east-1.elasticbeanstalk.com',
                  '127.0.0.1',
-                 'covidcounties.com'
+                 'covidcounties.com',
                  ]
 
 
