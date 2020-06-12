@@ -188,11 +188,11 @@ logconfig = {
         },
         'myproject.custom': {
             'handlers': ['console', 'mail_admins'],
-            'level': 'INFO'
+            'level': 'DEBUG'
         },
         'covidtrack': {
             'handlers': ['console2'],
-            'level': 'INFO'
+            'level': 'DEBUG'
         }
     }
 }
