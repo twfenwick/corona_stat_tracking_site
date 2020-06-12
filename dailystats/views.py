@@ -49,15 +49,18 @@ def counties(request, state_abrv: str = '', county: str = ''):
         yaxis_type = 'linear'
     title, filename, html = pandafunc(state_abrv=state_abrv, county=county, yaxis_type=yaxis_type)
     logger.info(f'Render: "{title}" from file "{filename}".')
+    # logger.info(body_content)
+    # return render(request, f'dailystats/{filename}', {'empty': 'entry'})
     return render(request, f'dailystats/{filename}', {'html': html})
 
 
 def pandafunc(state='', county='', state_abrv='', yaxis_type='linear'):
-    pull_latest_corona_data()
-    # Get state name by abbreviation, get state abbreviation by name
+
+    # yaxis_type = 'log'
     state = STATE_NAMES.get(state_abrv.upper(), '') if state_abrv and not state else state
     state_abrv = STATE_ABRV.get(state, '') if state and not state_abrv else state_abrv
     county = string.capwords(county) if county else county
+    pull_latest_corona_data()
     match = [state, county]
 
     if county:
@@ -66,33 +69,31 @@ def pandafunc(state='', county='', state_abrv='', yaxis_type='linear'):
         path = path_states
     else:
         path = path_us
-    live_path = path.replace('covid-19-data', 'covid-19-data/live')
 
-    # Add live update to historice
     df = pandas.read_csv(path)
+    live_path = path.replace('covid-19-data', 'covid-19-data/live')
     df_live = pandas.read_csv(live_path, header=0)
     df = pandas.concat([df, df_live])
 
-    # If state is given, filter data from either county or state data, else it's assumed US data since state not given.
     df = df[df['state'].isin(match)] if state else df
     if county and state:
         df = df[df['county'].isin(match)]
         title = f'{county} County, {state}'
+        plot_path = f'plots/{state}/{county}'
     elif state:
         title = state
+        plot_path = f'plots/{state}'
     else:
         title = 'United States'
 
-    # Get daily diffs for new case calcs
     new_cases = df['cases'].diff()
     new_deaths = df['deaths'].diff()
 
-    # Generate the plot
     fig = create_plot_overlays(df, title, new_cases, new_deaths, yaxis_type)
 
+    # local_plot = local_plot.replace(' ', '')
     filename = f'{state_abrv.upper()}{county}.html' if state and df['date'].size else 'US.html'
     plot_path = f'{os.getcwd()}/dailystats/templates/dailystats/{filename}'
-
     pio.write_html(fig, file=plot_path, auto_open=auto_open)
     if not auto_open:
         with open(plot_path, 'w') as f:
@@ -100,6 +101,7 @@ def pandafunc(state='', county='', state_abrv='', yaxis_type='linear'):
                     '{% block main_content %}'
                     '{{ html|safe }}'
                     '{% endblock %}')
+    # os.remove(plot_path) if os.path.exists(plot_path) else None
 
     html = pio.to_html(fig)
 
@@ -152,6 +154,9 @@ def pull_latest_corona_data():
 
 def create_plot_overlays(df, title, new_cases, new_deaths, yaxis_type):
     # Browser group plots:
+    # import datetime
+    # time = datetime.datetime.now()
+    # title = str(time) + title
     fig = go.Figure()
     fig.add_trace(go.Bar(
         x=df['date'],
