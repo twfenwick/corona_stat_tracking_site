@@ -27,11 +27,10 @@ SECRET_KEY = 'v3a0#dye97+bp2qw8$ka#i==our*&pcu+12@9r^%4z65rw$(e8'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = [
-    'corona-track-env.eba-5kd25yp2.us-east-1.elasticbeanstalk.com',
-    '127.0.0.1',
-    'covidcounties.com',
-]
+ALLOWED_HOSTS = ['corona-track-env.eba-5kd25yp2.us-east-1.elasticbeanstalk.com',
+                 '127.0.0.1',
+                 'covidcounties.com'
+                 ]
 
 
 # Application definition
