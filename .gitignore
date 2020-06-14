@@ -1,6 +1,6 @@
 .idea/**
+covid-19-data/**
 # Elastic Beanstalk Files
 #.elasticbeanstalk/*
 #!.elasticbeanstalk/*.cfg.yml
 #!.elasticbeanstalk/*.global.yml
-/covid-19-data/
