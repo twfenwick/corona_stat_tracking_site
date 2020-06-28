@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 from django.utils.log import DEFAULT_LOGGING as DEFLOG
-import json
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -134,7 +133,6 @@ if not os.path.exists(f'{os.getcwd()}/logs'):
     os.mkdir('logs')
 
 
-# print(json.dumps(DEFLOG, indent=4, sort_keys=True))
 LOGGING = DEFLOG
 logconfig = {
     'version': 1,
@@ -200,6 +198,4 @@ LOGGING.get('filters', {}).update(logconfig.get('filters', {}))
 LOGGING.get('formatters', {}).update(logconfig.get('formatters', {}))
 LOGGING.get('handlers', {}).update(logconfig.get('handlers', {}))
 LOGGING.get('loggers', {}).update(logconfig.get('loggers', {}))
-# print('\n*************************************************\n')
-# print(json.dumps(LOGGING, indent=4, sort_keys=True))
 
