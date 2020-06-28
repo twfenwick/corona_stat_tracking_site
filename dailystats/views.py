@@ -3,7 +3,6 @@ import logging
 import string
 import datetime
 
-from bs4 import BeautifulSoup
 from django.shortcuts import render
 import plotly.graph_objects as go
 import plotly.io as pio
@@ -102,15 +101,6 @@ def pandafunc(state='', county='', state_abrv='', yaxis_type='linear'):
                     '{% endblock %}')
 
     html = pio.to_html(fig)
-
-    # soup = BeautifulSoup(html)
-    # body = soup.find('body')
-    # body_contents = body.findChildren(recursive=False)
-    # bc = body_contents.pop()
-    # bc = body_contents[0]
-    #
-    # import chart_studio.tools as tls
-    # emb = tls.get_embed(plot_path, 1)
     return title, filename, html
 
 
