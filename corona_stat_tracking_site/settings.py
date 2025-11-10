@@ -21,14 +21,16 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '123'
+SECRET_KEY = 'any-key'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
+# Use eb status to get CNAME after creating the environment per aws elastic beanstalk instructions
+# https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/create-deploy-python-django.html#python-django-deploy
+# ALLOWED_HOSTS = ['<get CNAME and add here>', '127.0.0.1']
 ALLOWED_HOSTS = ['corona-tracker-env.eba-bgpy7fu2.us-east-1.elasticbeanstalk.com',
-                 '127.0.0.1',
-                 'covidcounties.com'
+                 '127.0.0.1'
                  ]
 
 
