@@ -14,4 +14,6 @@ visually, but it still has some use for educational purposes as a tool for learn
 technologies.
 
 The data was sourced from the New York Times COVID-19 data repository on GitHub: 
-https://github.com/nytimes/covid-19-data.git which is no longer updated as of March 2023.
+https://github.com/nytimes/covid-19-data.git which is no longer updated as of March 2023. Please note, the initial pull
+from the nytimes repository takes a few minutes as it is a large dataset. It is fetched only once at server start and
+pulled into the project root, so you may want to pull it separately to avoid the wait during runtime.
