@@ -21,12 +21,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ''
+SECRET_KEY = '123'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['corona-track-env.eba-5kd25yp2.us-east-1.elasticbeanstalk.com',
+ALLOWED_HOSTS = ['corona-tracker-env.eba-bgpy7fu2.us-east-1.elasticbeanstalk.com',
                  '127.0.0.1',
                  'covidcounties.com'
                  ]
